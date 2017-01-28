@@ -2,11 +2,13 @@
 """
 YOUR HEADER COMMENT HERE
 
-@author: YOUR NAME HERE
+@author: Sarah Barden
 
 """
 
 import random
+import math
+
 from amino_acids import aa, codons, aa_table   # you may find these useful
 from load import load_seq
 
@@ -18,11 +20,8 @@ def shuffle_string(s):
     return ''.join(random.sample(s, len(s)))
 
 # YOU WILL START YOUR IMPLEMENTATION FROM HERE DOWN ###
-
-
 def get_complement(nucleotide):
     """ Returns the complementary nucleotide
-
         nucleotide: a nucleotide (A, C, G, or T) represented as a string
         returns: the complementary nucleotide
     >>> get_complement('A')
@@ -30,8 +29,14 @@ def get_complement(nucleotide):
     >>> get_complement('C')
     'G'
     """
-    # TODO: implement this
-    pass
+    if nucleotide == 'A':
+        return 'T'
+    if nucleotide == 'T':
+        return 'A'
+    if nucleotide == 'C':
+        return 'G'
+    if nucleotide == 'G':
+        return 'C'
 
 
 def get_reverse_complement(dna):
@@ -45,14 +50,26 @@ def get_reverse_complement(dna):
     >>> get_reverse_complement("CCGCGTTCA")
     'TGAACGCGG'
     """
-    # TODO: implement this
-    pass
+    rev_comp = ''
+    for i in range(0, len(dna)):
+        nucleo = dna[i]
+        comp = get_complement(nucleo)
+        rev_comp = comp + rev_comp
+    return rev_comp
 
+def split_into_codons(dna):  #I made up this function
+    dna_split = []
+    length = math.ceil(len(dna)/3)
+    for i in range(0, length):
+        j = 3*i
+        codon = dna[j:j+3]
+        dna_split = dna_split + [codon]
+    return dna_split
 
 def rest_of_ORF(dna):
     """ Takes a DNA sequence that is assumed to begin with a start
         codon and returns the sequence up to but not including the
-        first in frame stop codon.  If there is no in frame stop codon,
+        first in frame stop codon (TGA, TAA, or TAG).  If there is no in frame stop codon,
         returns the whole string.
 
         dna: a DNA sequence
@@ -62,9 +79,15 @@ def rest_of_ORF(dna):
     >>> rest_of_ORF("ATGAGATAGG")
     'ATGAGA'
     """
-    # TODO: implement this
-    pass
-
+    dna_split = split_into_codons(dna)
+    for i in range(0, len(dna_split)):
+        if dna_split[i] == "TAG":
+            index = i
+        if dna_split[i] == "TGA":
+            index = i
+        if dna_split[i] == "TAA":
+            index = i
+    return ''.join(dna_split[:index])
 
 def find_all_ORFs_oneframe(dna):
     """ Finds all non-nested open reading frames in the given DNA
@@ -79,8 +102,18 @@ def find_all_ORFs_oneframe(dna):
     >>> find_all_ORFs_oneframe("ATGCATGAATGTAGATAGATGTGCCC")
     ['ATGCATGAATGTAGA', 'ATGTGCCC']
     """
-    # TODO: implement this
-    pass
+    dna_split = split_into_codons(dna)
+    starts = ''
+    for i in range(0, len(dna_split)):
+        if dna_split[i] == "ATG":
+            start_codon_pos = starts+str(i)
+
+    all_ORFs = []
+    for i in range(0, len(start_codon_pos)):
+        orf = rest_of_ORF(dna[i:])
+        all_ORFs = all_ORFs + [orf]
+    return all_ORFs
+
 
 
 def find_all_ORFs(dna):
@@ -163,4 +196,5 @@ def gene_finder(dna):
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
+    #doctest.testmod()
+    doctest.run_docstring_examples(find_all_ORFs_oneframe, globals())
