@@ -58,6 +58,16 @@ def get_reverse_complement(dna):
     return rev_comp
 
 def split_into_codons(dna):
+    """ Takes a DNA sequence (a string) and splits it into a list of codons
+        as a list of strings.
+
+        dna: a DNA sequence
+        returns: DNA sequence split into codons
+    >>> split_into_codons("ATGTGATAG")
+    ['ATG', 'TGA', 'TAG']
+    >>> split_into_codons("ATGTGATAGCC")
+    ['ATG', 'TGA', 'TAG', 'CC']
+    """
     dna_split = []
     length = math.ceil(len(dna)/3)
     for i in range(0, length):
@@ -69,8 +79,8 @@ def split_into_codons(dna):
 def rest_of_ORF(dna):
     """ Takes a DNA sequence that is assumed to begin with a start
         codon and returns the sequence up to but not including the
-        first in frame stop codon (TGA, TAA, or TAG).  If there is no in frame stop codon,
-        returns the whole string.
+        first in frame stop codon (TGA, TAA, or TAG).  If there is
+        no in frame stop codon, returns the whole string.
 
         dna: a DNA sequence
         returns: the open reading frame represented as a string
@@ -83,16 +93,11 @@ def rest_of_ORF(dna):
     dna_split = split_into_codons(dna)
 
     for i, j in enumerate(dna_split):
-        if j == "TAG":
-            index = i
-        if j == "TGA":
-            index = i
-        if j == "TAA":
+        if j == "TAG" or j == "TGA" or j == "TAA":
             index = i
     if index == -1:
         return ''.join(dna_split)  # if there is no stop codon
     return ''.join(dna_split[:index])
-
 
 def find_all_ORFs_oneframe(dna):
     """ Finds all non-nested open reading frames in the given DNA
@@ -104,20 +109,23 @@ def find_all_ORFs_oneframe(dna):
 
         dna: a DNA sequence
         returns: a list of non-nested ORFs
-    >>> find_all_ORFs_oneframe("ATGCATATGTGTAGATAGATGTGCCC")
+    >>> find_all_ORFs_oneframe("ATGCATGAATGTAGATAGATGTGCCC")
     ['ATGCATGAATGTAGA', 'ATGTGCCC']
+    >>> find_all_ORFs_oneframe("ATGCCCATGTTTTAG")
+    ['ATGCCCATGTTT']
     """
     dna_split = split_into_codons(dna)
-    start_codon_pos = ''
-    for i in range(0, len(dna_split)):
-        if dna_split[i] == "ATG":
-            start_codon_pos += str(i)
-
+    i = 0
     all_ORFs_oneframe = []
-    for i in range(0, len(start_codon_pos)):
-        start_here = int(start_codon_pos[i])*3
-        orf = rest_of_ORF(dna[start_here:])
-        all_ORFs_oneframe += [orf]
+    length_of_orf = 0
+    while i < len(dna_split):
+        if dna_split[i] == "ATG":
+            orf = rest_of_ORF(dna[int(i)*3:])
+            all_ORFs_oneframe += [orf]
+            length_of_orf = math.ceil(len(orf)/3)
+            i += length_of_orf
+        else:
+            i += 1
     return all_ORFs_oneframe
 
 def find_all_ORFs(dna):
@@ -159,8 +167,6 @@ def longest_ORF(dna):
     >>> longest_ORF("ATGCGAATGTAGCATCAAA")
     'ATGCTACATTCGCAT'
     """
-    # TODO: implement this
-    pass
 
 
 def longest_ORF_noncoding(dna, num_trials):
@@ -203,5 +209,5 @@ def gene_finder(dna):
 
 if __name__ == "__main__":
     import doctest
-    #doctest.testmod()
-    doctest.run_docstring_examples(find_all_ORFs_both_strands, globals())
+    doctest.testmod(verbose = True)
+    # doctest.run_docstring_examples(find_all_ORFs_both_strands, globals())
