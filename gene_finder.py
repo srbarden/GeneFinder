@@ -19,6 +19,7 @@ def shuffle_string(s):
         have to modify this in any way """
     return ''.join(random.sample(s, len(s)))
 
+
 # YOU WILL START YOUR IMPLEMENTATION FROM HERE DOWN ###
 def get_complement(nucleotide):
     """ Returns the complementary nucleotide
@@ -31,11 +32,11 @@ def get_complement(nucleotide):
     """
     if nucleotide == 'A':
         return 'T'
-    if nucleotide == 'T':
+    elif nucleotide == 'T':
         return 'A'
-    if nucleotide == 'C':
+    elif nucleotide == 'C':
         return 'G'
-    if nucleotide == 'G':
+    elif nucleotide == 'G':
         return 'C'
 
 
@@ -57,6 +58,7 @@ def get_reverse_complement(dna):
         rev_comp = comp + rev_comp
     return rev_comp
 
+
 def split_into_codons(dna):
     """ Takes a DNA sequence (a string) and splits it into a list of codons
         as a list of strings.
@@ -75,6 +77,7 @@ def split_into_codons(dna):
         codon = dna[j:j+3]
         dna_split += [codon]
     return dna_split
+
 
 def rest_of_ORF(dna):
     """ Takes a DNA sequence that is assumed to begin with a start
@@ -98,6 +101,7 @@ def rest_of_ORF(dna):
     if index == -1:
         return ''.join(dna_split)  # if there is no stop codon
     return ''.join(dna_split[:index])
+
 
 def find_all_ORFs_oneframe(dna):
     """ Finds all non-nested open reading frames in the given DNA
@@ -128,6 +132,7 @@ def find_all_ORFs_oneframe(dna):
             i += 1
     return all_ORFs_oneframe
 
+
 def find_all_ORFs(dna):
     """ Finds all non-nested open reading frames in the given DNA sequence in
         all 3 possible frames and returns them as a list.  By non-nested we
@@ -142,10 +147,11 @@ def find_all_ORFs(dna):
     ['ATGCATGAATGTAG', 'ATGAATGTAG', 'ATG']
     """
     all_ORFs = []
-    for i in range(0,3):
+    for i in range(0, 3):
         dna_new = dna[i:]
         all_ORFs += find_all_ORFs_oneframe(dna_new)
     return all_ORFs
+
 
 def find_all_ORFs_both_strands(dna):
     """ Finds all non-nested open reading frames in the given DNA sequence on both
@@ -206,6 +212,7 @@ def gene_finder(dna):
     """
     # TODO: implement this
     pass
+
 
 if __name__ == "__main__":
     import doctest
