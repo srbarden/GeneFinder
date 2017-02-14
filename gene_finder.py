@@ -9,14 +9,14 @@ YOUR HEADER COMMENT HERE
 import random
 import math
 from load import load_seq
-dna = load_seq("./data/X73525.fa")
+random.seed(5845)
 
 from amino_acids import aa, codons, aa_table   # you may find these useful
 
 
 def shuffle_string(s):
     """Shuffles the characters in the input string
-        NOTE: this is a helper function, you do not
+        NOTE: this is a terhelper function, you do not
         have to modify this in any way """
     return ''.join(random.sample(s, len(s)))
 
@@ -191,7 +191,7 @@ def longest_ORF_noncoding(dna, num_trials):
     longest_each_trial = []
     while i < num_trials:
         shuffled_dna = shuffle_string(dna)
-        longest_each_trial += [longest_ORF(shuffled_dna)]
+        longest_each_trial.append(longest_ORF(shuffled_dna))
         i += 1
 
     longest_longest = max(longest_each_trial, key=len)
@@ -200,7 +200,7 @@ def longest_ORF_noncoding(dna, num_trials):
 
 def coding_strand_to_AA(dna):
     """ Computes the Protein encoded by a sequence of DNA.  This function
-        does not check for start and stop codons (it assumes that the input
+        does no t check for start and stop codons (it assumes that the input
         DNA sequence represents an protein coding region).
 
         dna: a DNA sequence represented as a string
@@ -230,14 +230,12 @@ def gene_finder(dna):
         returns: a list of all amino acid sequences coded by the sequence dna.
     """
     orfs = find_all_ORFs_both_strands(dna)
-    threshold = longest_ORF_noncoding(dna, 1500)
+    threshold = longest_ORF_noncoding(dna, 1000)
     print('threshold is', threshold)
-    # print(orfs)
-    print(len(orfs))
+    print('number of orfs:', len(orfs))
     aa_sequences = []
     i = 0
     while i < len(orfs):
-        print('i is', i)
         print(len(orfs[i]))
         if len(orfs[i]) > threshold:
             print('if')
@@ -248,6 +246,7 @@ def gene_finder(dna):
 
 if __name__ == "__main__":
     import doctest
+    dna = load_seq("./data/X73525.fa")
     gene_finder(dna)
     # doctest.testmod(verbose=True)
     # doctest.run_docstring_examples(coding_strand_to_AA, globals())
