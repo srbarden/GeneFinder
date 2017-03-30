@@ -200,7 +200,7 @@ def longest_ORF_noncoding(dna, num_trials):
 
 def coding_strand_to_AA(dna):
     """ Computes the Protein encoded by a sequence of DNA.  This function
-        does no t check for start and stop codons (it assumes that the input
+        does not check for start and stop codons (it assumes that the input
         DNA sequence represents an protein coding region).
 
         dna: a DNA sequence represented as a string
@@ -230,6 +230,7 @@ def gene_finder(dna):
         returns: a list of all amino acid sequences coded by the sequence dna.
     """
     orfs = find_all_ORFs_both_strands(dna)
+    print(orfs)
     threshold = longest_ORF_noncoding(dna, 1000)
     print('threshold is', threshold)
     print('number of orfs:', len(orfs))
